@@ -1,18 +1,29 @@
 #ImageJ Converter 
 
+library(tidyverse)
+
 # Command for loading cheatsheet
 cheatsheet <- read.csv('~/Desktop/GitHub/CF_2022/CALICE.CHEATSHEET.csv')
 
 # Loading second sample
-ImageJSample <- read.csv('~/Desktop/Image_J/OFRA_PP_9GX5_P1.csv')
+ImageJSample <- read.csv('~/Desktop/GitHub/CF_2022/Image_J/OFAV_SP_2AZ7_P2.csv',na.strings=c("",".","NaN"))
+
+#Loading Master File
+master <- read.csv('~/Desktop/Github/CF_2022/Transplants_Calice_Master.csv')
 
 #Erase .jpg files
-ImageJSample$Label <- gsub(" .png","",as.character(ImageJSample$Label))
+ImageJSample$Label <- gsub(".jpg","",as.character(ImageJSample$Label))
 
 #Merging Samples 
 x <- merge(x= ImageJSample, y=cheatsheet, by= 0)
 
 #Write new csv 
-write.csv(x, '~/Desktop/GitHub/CF_2022/RawData/Merged_OFRA_PP_9GX5_P1.csv')
+write.csv(x, '~/Desktop/GitHub/CF_2022/RawData/Merged_OFAV_SP_2AZ7_P2.csv')
 
-#
+
+#append the new data to the master
+#the distinct command makes sure replicate lines are not being added 
+master <- rbind(master, x) %>% distinct()
+#save updated master
+write.csv(master, '~/Desktop/Github/CF_2022/Transplants_Calice_Master.csv', row.names=FALSE)
+
